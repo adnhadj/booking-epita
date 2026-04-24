@@ -1,9 +1,6 @@
 name: security
-
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 6 * * *"
 
 permissions:
   actions: read
@@ -11,15 +8,13 @@ permissions:
   contents: read
 
 jobs:
-  dependencies-analysis:
-    name: Dependencies Analysis
+  dependencies:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: checkout
         uses: actions/checkout@v4
 
-      - name: Run OSV Scanner
+      - name: run osv-scanner
         uses: google/osv-scanner-action/osv-scanner-action@v2.3.5
         with:
           scan-args: |-
@@ -28,30 +23,24 @@ jobs:
             ./
         continue-on-error: true
 
-      - name: Upload OSV SARIF report
-        uses: github/codeql-action/upload-sarif@v4
+      - name: upload sarif
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: DependenciesAnalysisFull.sarif
 
   source-code-analysis:
-    name: Source Code Analysis
     runs-on: ubuntu-latest
     container:
-      image: returntocorp/semgrep:latest
-
+      image: returntocorp/semgrep@sha256:7810f1d7884974ab6dda7bef8f4a2c8e165ea2142fd8260515d380e4f1407263
     steps:
-      - name: Checkout repository
+      - name: checkout
         uses: actions/checkout@v4
 
-      - name: Run Semgrep
-        run: |
-          semgrep scan \
-            --config .semgrep \
-            --sarif \
-            --output SourceCodeAnalysis.sarif
+      - name: run semgrep
+        run: semgrep --config .semgrep --sarif --output SourceCodeAnalysis.sarif .
         continue-on-error: true
 
-      - name: Upload Semgrep SARIF report
-        uses: github/codeql-action/upload-sarif@v4
+      - name: upload sarif
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: SourceCodeAnalysis.sarif
