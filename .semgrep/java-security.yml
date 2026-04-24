@@ -1,0 +1,7 @@
+rules:
+  - id: dangerous-system-exit
+    pattern: System.exit(...)
+    message: Avoid System.exit in web application code
+    severity: WARNING
+    languages:
+      - java
