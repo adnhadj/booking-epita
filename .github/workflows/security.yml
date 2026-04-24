@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run OSV Scanner
-        uses: google/osv-scanner-action/osv-scanner-action@v2
+        uses: google/osv-scanner-action/osv-scanner-action@v2.3.5
         with:
           scan-args: |-
             --format sarif
@@ -29,7 +29,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload OSV SARIF report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: DependenciesAnalysisFull.sarif
 
@@ -52,6 +52,6 @@ jobs:
         continue-on-error: true
 
       - name: Upload Semgrep SARIF report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: SourceCodeAnalysis.sarif
